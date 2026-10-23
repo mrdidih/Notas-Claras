@@ -4,90 +4,126 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#10182d">
-  <meta name="description" content="Calcula tu promedio ponderado y cuánto necesitas para aprobar cada materia. Sin anuncios.">
-  <title>Nota Clara · Calculadora de notas</title>
+  <meta name="description" content="Organiza tus materias y descubre cuánto necesitas para aprobar. Sin anuncios y con guardado local.">
+  <title>Notas Claras · Calculadora de notas</title>
   <style>
-    :root{color-scheme:dark;--bg:#0b1121;--panel:#131c31;--panel2:#19243a;--text:#f5f7fc;--sub:#a9b5c9;--border:#2c3a53;--primary:#84e3bd;--blue:#92b8ff;--amber:#ffcf80;--red:#ff9d9d;--radius:20px}
-    *{box-sizing:border-box}
-    body{margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(ellipse at 85% -10%,#18345d 0,transparent 43%),radial-gradient(ellipse at 3% 5%,#123f3f 0,transparent 34%),var(--bg);color:var(--text);line-height:1.45}
-    button,input{font:inherit}
-    button{cursor:pointer}
-    button:focus-visible,input:focus-visible{outline:2px solid var(--primary);outline-offset:3px}
-    .shell{max-width:1140px;margin:auto;padding:30px 20px 80px}
-    .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:32px}
-    .brand{display:flex;align-items:center;gap:11px;font-size:1.22rem;font-weight:780;letter-spacing:-.035em}
-    .brand-icon{height:38px;width:38px;border-radius:12px;display:grid;place-items:center;background:var(--primary);color:#09241c;font-weight:900;font-size:1.5rem}
-    .pill{border:1px solid #41645f;background:#132d2e;color:var(--primary);border-radius:999px;padding:7px 12px;font-size:.78rem;font-weight:650}
-    h1{font-size:clamp(2rem,4.5vw,3.75rem);line-height:1.06;letter-spacing:-.055em;margin:0 0 16px;max-width:760px}
-    h1 span{color:var(--primary)}
-    .lead{color:var(--sub);margin:0 0 30px;max-width:700px;font-size:1.02rem}
-    .setup{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;border:1px solid var(--border);border-radius:var(--radius);background:#141d30c9;padding:18px;margin-bottom:26px}
-    .field{display:flex;flex-direction:column;gap:7px}
-    .field label{font-size:.82rem;color:#c4ccdc;font-weight:650}
-    .field input,.add-row input,.course-name,.eval-row input{color:var(--text);border:1px solid var(--border);border-radius:11px;background:#0c1526;padding:12px 13px;min-width:0;width:100%}
-    .field input{width:145px}
-    input::placeholder{color:#7d8aa0}
-    .setup-hint{color:var(--sub);font-size:.79rem;flex:1 1 240px;padding-bottom:4px}
-    .toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px}
-    h2{font-size:1.18rem;letter-spacing:-.02em;margin:0}
-    .toolbar-actions{display:flex;gap:8px;flex-wrap:wrap}
-    .btn{border:1px solid var(--border);border-radius:11px;padding:10px 14px;background:#1b2942;color:var(--text);font-size:.87rem;font-weight:650;transition:background .12s,transform .12s}
-    .btn:hover{background:#283b5b}
-    .btn:active{transform:scale(.98)}
-    .btn-primary{background:var(--primary);color:#09251b;border-color:var(--primary)}
-    .btn-primary:hover{background:#a0ebce}
-    .btn-small{padding:8px 11px;font-size:.8rem}
-    .btn-danger{color:var(--red);background:transparent}
-    .add-row{display:flex;gap:9px;margin-bottom:18px}
-    .add-row input{flex:1}
-    .courses{display:grid;gap:20px}
-    .card{background:linear-gradient(155deg,#172139 0%,#111a2e 78%);border:1px solid var(--border);border-radius:22px;overflow:hidden;box-shadow:0 12px 32px #0208172b}
-    .card-head{padding:22px 22px 12px;display:flex;gap:14px;justify-content:space-between;align-items:center}
-    .course-name{font-size:1.2rem;font-weight:750;letter-spacing:-.025em;background:transparent;border:1px solid transparent;padding:6px 8px;margin-left:-8px;max-width:600px}
-    .course-name:hover,.course-name:focus{background:#0c1526;border-color:var(--border)}
-    .stats{padding:10px 22px 18px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-    .stat{border:1px solid #30405a;background:#16233a;padding:14px;border-radius:14px;min-width:0}
-    .stat-label{font-size:.75rem;color:#aebbd0;font-weight:650;margin-bottom:8px}
-    .stat-value{font-size:clamp(1.2rem,2.3vw,1.8rem);font-weight:780;letter-spacing:-.03em;line-height:1.2;overflow-wrap:anywhere}
-    .stat-sub{color:#93a2b9;font-size:.72rem;margin-top:6px;min-height:1.2em}
-    .mint{color:var(--primary)}.amber{color:var(--amber)}.bad{color:var(--red)}.blue{color:var(--blue)}
-    .progress-area{padding:0 22px 18px}
-    .progress-label{display:flex;justify-content:space-between;gap:12px;font-size:.78rem;color:#abb8c8;margin-bottom:8px}
-    .track{height:9px;border-radius:99px;background:#303c53;overflow:hidden}
-    .fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#47bda3,#97ecc5);transition:width .2s}
-    .notice{font-size:.82rem;color:#c6d1e0;margin:12px 0 0}
-    .notice.warn{color:var(--amber)}.notice.danger{color:var(--red)}
-    .eval-wrap{border-top:1px solid var(--border);padding:16px 22px 20px;background:#10192c82}
-    .eval-head,.eval-row{display:grid;grid-template-columns:minmax(120px,2fr) minmax(90px,.75fr) minmax(95px,.75fr) 37px;gap:10px;align-items:center}
-    .eval-head{font-size:.75rem;color:#93a4bd;padding:0 3px 8px;font-weight:650}
-    .eval-row{margin-bottom:9px}
-    .eval-row input{padding:10px 12px;border-radius:9px}
-    .eval-row input:disabled{opacity:.65}
-    .remove{height:36px;width:36px;border:1px solid #3b3c50;background:transparent;border-radius:9px;color:#ffb5b5;font-size:1.1rem}
-    .remove:hover{background:#402c3b}
-    .eval-actions{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:14px}
-    .tiny{font-size:.78rem;color:#96a6bf}
-    .foot{border-top:1px solid var(--border);margin-top:34px;padding-top:18px;color:#91a2b9;font-size:.83rem;display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap}
-    .empty{border:1px dashed #40516d;border-radius:20px;padding:34px 20px;text-align:center;color:var(--sub)}
-    .empty strong{display:block;color:var(--text);font-size:1.1rem;margin-bottom:8px}
-    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-    @media(max-width:650px){.shell{padding:19px 13px 60px}.topbar{margin-bottom:27px}.pill{font-size:.7rem}.setup{padding:14px}.field{flex:1 1 115px}.field input{width:100%}.card-head{padding:17px 15px 10px}.stats{padding:8px 15px 16px;grid-template-columns:1fr 1fr}.stat:last-child{grid-column:1/-1}.stat{padding:12px}.stat-value{font-size:1.5rem}.progress-area{padding:0 15px 18px}.eval-wrap{padding:14px 12px 17px}.eval-head,.eval-row{grid-template-columns:minmax(0,1.5fr) minmax(0,.8fr) minmax(0,.8fr) 31px;gap:5px}.eval-row input{padding:10px 7px;font-size:.85rem}.remove{width:31px;height:35px}.eval-head{font-size:.68rem}.add-row{flex-wrap:wrap}.add-row input{flex-basis:100%}.add-row .btn{width:100%}}
-  </style>
+/* Notas Claras · Papel y tinta · diseño editorial */
+:root {color-scheme:light;--base:#f5f1e8;--paper:#fffdf8;--paper-alt:#f0eee7;--ink:#25352d;--sub:#73766c;--rule:#d8d7ce;--accent:#315b47;--accent-alt:#e2eae0;--accent-contrast:#ffffff;--good:#315b47;--blue:#3c586c;--warn:#98672c;--bad:#a14d45;--radius:4px;--font-ui:"Segoe UI",Arial,sans-serif;--font-title:Georgia,"Times New Roman",serif;--stroke:1px;--scale-shadow:0 9px 26px rgba(35,41,31,.035)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--base);color:var(--ink);margin:0;min-height:100vh;font-family:var(--font-ui);line-height:1.5;transition:background .16s,color .16s}
+body{background-image:linear-gradient(90deg,transparent calc(50% - 620px),rgba(87,100,81,.04) calc(50% - 620px),rgba(87,100,81,.04) calc(50% - 619px),transparent calc(50% - 619px))}
+body[data-theme="b"]{background-image:radial-gradient(#b5aea080 1px,transparent 1px);background-size:24px 24px}
+body[data-theme="c"]{background-image:linear-gradient(#354b3e35 1px,transparent 1px),linear-gradient(90deg,#354b3e35 1px,transparent 1px);background-size:32px 32px}
+button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+button:disabled{opacity:.55;cursor:not-allowed}
+.shell{max-width:1170px;margin:0 auto;padding:26px 27px 65px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:14px;border-bottom:var(--stroke) solid var(--rule);padding:0 0 16px;margin:0 0 32px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:750;font-size:18px;letter-spacing:-.045em}
+.brand-icon{display:grid;place-items:center;background:var(--accent);color:var(--accent-contrast);font-size:20px;width:39px;height:39px;border-radius:var(--radius);font-family:Georgia,serif}
+.pill{color:var(--sub);font-size:10px;font-weight:750;text-transform:uppercase;letter-spacing:.13em}
+.hero{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,.8fr);gap:35px;align-items:stretch;margin-bottom:30px}
+.hero-copy{padding:17px 0 20px}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 19px}
+h1{font-family:var(--font-title);font-weight:500;line-height:1.03;letter-spacing:-.055em;font-size:clamp(3rem,6.7vw,5.9rem);margin:0 0 24px;max-width:760px}
+h1 span{font-style:italic;color:var(--accent)}
+.lead{font-size:1.01rem;line-height:1.65;color:var(--sub);max-width:590px;margin:0}
+.hero-note{background:var(--accent);color:var(--accent-contrast);padding:23px 26px;display:flex;flex-direction:column;justify-content:space-between;border-radius:var(--radius);min-height:272px;position:relative;overflow:hidden}
+.hero-note::before{content:'↗';position:absolute;right:21px;top:6px;font-family:Georgia,serif;opacity:.22;font-size:104px;font-weight:400;line-height:1}
+.hero-overline{font-size:11px;text-transform:uppercase;letter-spacing:.13em;position:relative;z-index:1;opacity:.78}
+.hero-number{font-size:clamp(3rem,6vw,5rem);font-weight:550;letter-spacing:-.06em;line-height:1;margin:17px 0 24px;font-variant-numeric:tabular-nums;position:relative;z-index:1}
+.hero-number small{font-size:15px;font-weight:400;opacity:.7;letter-spacing:0}
+.hero-meta{border-top:1px solid currentColor;padding-top:12px;display:flex;justify-content:space-between;gap:10px;align-items:end;position:relative;z-index:1}
+.hero-meta p{margin:0;font-size:11px;opacity:.8;max-width:125px}
+.hero-meta strong{font-size:25px;letter-spacing:-.06em}
+.section-caption{display:flex;align-items:center;gap:8px;color:var(--accent);text-transform:uppercase;letter-spacing:.13em;font-size:11px;font-weight:800;margin-bottom:15px}
+.section-caption::after{content:'';height:1px;background:var(--rule);flex:1}
+.setup{border:var(--stroke) solid var(--rule);background:var(--paper);padding:18px 22px;display:flex;align-items:end;gap:16px;flex-wrap:wrap;margin:0 0 36px;border-radius:var(--radius)}
+.field{display:flex;flex-direction:column;gap:7px}
+.field label{font-size:11px;font-weight:750;color:var(--sub)}
+.field input,.add-row input,.course-name,.eval-row input{background:var(--paper);color:var(--ink);border:var(--stroke) solid var(--rule);border-radius:var(--radius);padding:10px 12px;min-width:0;width:100%;outline:0}
+.field input:focus,.add-row input:focus,.course-name:focus,.eval-row input:focus{border-color:var(--accent)}
+input::placeholder{color:var(--sub);opacity:.7}.field input{width:150px}
+.setup-hint{flex:1 1 220px;font-size:12px;color:var(--sub);padding-bottom:5px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 15px}
+h2{font-family:var(--font-title);font-weight:600;letter-spacing:-.04em;font-size:clamp(1.65rem,3vw,2.3rem);margin:0}
+.toolbar-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:var(--stroke) solid var(--rule);border-radius:var(--radius);background:var(--paper);color:var(--ink);font-size:12px;padding:11px 14px;font-weight:700;transition:background .14s,transform .14s}
+.btn:hover{background:var(--paper-alt)}.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--accent);color:var(--accent-contrast);border-color:var(--accent)}.btn-primary:hover{filter:brightness(1.09);background:var(--accent)}
+.btn-danger{border:none;color:var(--bad);background:transparent;padding:8px 10px}.btn-danger:hover{background:transparent;text-decoration:underline}
+.btn-small{padding:9px 13px}
+.add-row{display:flex;align-items:stretch;gap:9px;margin-bottom:17px}
+.add-row input{flex:1;background:var(--paper);min-height:43px}
+.courses{display:grid;gap:17px}
+.card{background:var(--paper);border:var(--stroke) solid var(--rule);border-radius:var(--radius);overflow:hidden;box-shadow:var(--scale-shadow)}
+.card-head{padding:24px 25px 8px;display:flex;align-items:center;gap:12px;justify-content:space-between}
+.course-name{font-family:var(--font-title);font-size:clamp(1.45rem,3vw,2rem);font-weight:600;letter-spacing:-.035em;border:1px solid transparent;background:transparent;padding:5px 7px;margin-left:-7px;max-width:650px}
+.course-name:hover,.course-name:focus{border-color:var(--rule);background:var(--paper-alt)}
+.stats{padding:12px 25px 22px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stat{min-width:0;background:var(--paper-alt);border-left:3px solid var(--rule);padding:17px 17px 15px;border-radius:var(--radius)}
+.stat:last-child{border-left-color:var(--accent)}
+.stat-label{font-size:11px;color:var(--sub);font-weight:700;margin-bottom:10px}
+.stat-value{font-size:clamp(1.5rem,3vw,2.2rem);font-weight:600;line-height:1.1;letter-spacing:-.04em;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.stat-sub{font-size:11px;color:var(--sub);margin-top:9px;min-height:14px}
+.mint{color:var(--good)}.amber{color:var(--warn)}.bad{color:var(--bad)}.blue{color:var(--blue)}
+.progress-area{padding:0 25px 23px}
+.progress-label{display:flex;justify-content:space-between;gap:12px;color:var(--sub);font-size:11px;margin-bottom:8px}
+.track{background:var(--paper-alt);height:7px;border-radius:var(--radius);overflow:hidden}
+.fill{background:var(--accent);height:100%;border-radius:var(--radius);transition:width .15s}
+.notice{font-size:12px;color:var(--sub);margin:13px 0 0}.notice.warn{color:var(--warn)}.notice.danger{color:var(--bad)}
+.eval-wrap{border-top:var(--stroke) solid var(--rule);padding:19px 25px 20px;background:var(--paper)}
+.eval-head,.eval-row{display:grid;grid-template-columns:minmax(140px,2fr) minmax(85px,.72fr) minmax(100px,.72fr) 32px;gap:10px;align-items:center}
+.eval-head{font-size:11px;color:var(--sub);font-weight:700;margin-bottom:9px;padding:0 6px}
+.eval-row{margin-bottom:9px}.eval-row input{font-size:13px;padding:11px;border-radius:var(--radius);background:var(--base)}
+.remove{height:36px;width:32px;border:1px solid var(--rule);background:var(--paper);border-radius:var(--radius);color:var(--bad);font-size:18px}
+.remove:hover{background:var(--paper-alt)}
+.eval-actions{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-top:17px}
+.tiny{color:var(--sub);font-size:11px}
+.foot{border-top:var(--stroke) solid var(--rule);padding-top:18px;margin-top:36px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;color:var(--sub);font-size:11px}
+.empty{background:var(--paper);border:1px dashed var(--rule);border-radius:var(--radius);padding:40px 20px;text-align:center;color:var(--sub)}
+.empty strong{display:block;color:var(--ink);margin-bottom:7px;font-size:16px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+/* Responsive */
+@media(max-width:850px){.shell{padding:23px 18px 50px}.hero{grid-template-columns:1fr;gap:8px}.hero-note{min-height:180px}.hero-number{margin:8px 0 14px}}
+@media(max-width:600px){.shell{padding:19px 13px 45px}.topbar{margin-bottom:21px}.hero-copy{padding:8px 0 17px}.hero{margin-bottom:22px}h1{font-size:clamp(2.9rem,11vw,4.1rem);margin-bottom:15px}.lead{font-size:.92rem}.hero-note{min-height:176px;padding:18px 20px}.hero-overline{font-size:10px}.hero-number{font-size:3.5rem}.hero-meta p{max-width:none}.section-caption{font-size:10px}.setup{padding:15px;gap:12px}.field{flex:1 1 110px}.field input{width:100%}.setup-hint{flex-basis:100%}.toolbar{align-items:flex-start}h2{font-size:1.65rem}.toolbar-actions{width:100%}.toolbar-actions .btn{flex:1}.add-row{flex-wrap:wrap}.add-row input{flex:1 1 100%}.add-row .btn{width:100%}.card-head{padding:16px 14px 8px}.course-name{font-size:1.45rem!important}.stats{padding:9px 14px 15px;grid-template-columns:1fr 1fr;gap:7px}.stat:last-child{grid-column:1/-1}.stat{padding:12px}.stat-value{font-size:1.55rem}.stat-label,.stat-sub{font-size:10px}.progress-area{padding:0 14px 15px}.eval-wrap{padding:14px 11px 18px}.eval-head,.eval-row{grid-template-columns:minmax(0,1.45fr) minmax(0,.75fr) minmax(0,.8fr) 31px;gap:5px}.eval-head{font-size:9px;padding:0 3px}.eval-row input{padding:10px 6px;font-size:12px}.remove{width:31px;height:34px}.foot{font-size:10px}.hero-number{font-size:3.2rem}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+/* Ajustes finales: estados discretos y lectura cómoda */
+html {scroll-behavior:smooth}
+.hero-note .hero-explain {font-size:10px;opacity:.74;margin:8px 0 0;line-height:1.35;max-width:230px}
+.foot {font-size:12px}
+.card:focus-within {border-color:#9cae9c}
+@media(min-width:900px){.hero-copy{padding-top:29px}}
+@media(max-width:600px){.hero-note .hero-explain{font-size:10px}.hero-note{min-height:190px}}
+
+</style>
 </head>
 <body>
-  <div class="shell">
+<div class="shell">
     <header class="topbar">
-      <div class="brand"><span class="brand-icon" aria-hidden="true">✓</span> Nota Clara</div>
-      <span class="pill">100% sin anuncios</span>
+      <div class="brand"><span class="brand-icon" aria-hidden="true">✓</span> Notas Claras</div>
+      <span class="pill">LOCAL EN ESTE DISPOSITIVO · SIN ANUNCIOS</span>
     </header>
     <main>
-      <h1>Tus notas claras.<br><span>Sin hacer cuentas.</span></h1>
-      <p class="lead">Calcula tu promedio ponderado, descubre cuánto necesitas para pasar y organiza todas tus materias en un solo lugar.</p>
+      <section class="hero" aria-label="Resumen de notas">
+        <div class="hero-copy">
+          <p class="eyebrow" id="eyebrow">Tu cuaderno digital · 01</p>
+          <h1 id="heroTitle">Las notas,<br><span>en orden.</span></h1>
+          <p class="lead" id="heroLead">Lo que llevas, lo que falta y cuánto necesitas para pasar. Sin fórmulas enredadas.</p>
+        </div>
+        <aside class="hero-note">
+          <span class="hero-overline" id="overviewLabel">Media de materias con notas</span>
+          <div class="hero-number" id="overviewValue">— <small>/ 5,00</small></div>
+          <div><div class="hero-meta"><p>Materias con notas registradas</p><strong id="overviewCount">0</strong></div><p class="hero-explain">Referencia orientativa: media simple de las materias evaluadas, sin créditos.</p></div>
+        </aside>
+      </section>
+      <div class="section-caption">Configuración</div>
       <section class="setup" aria-label="Configuración de notas">
         <div class="field"><label for="pass">Nota mínima para pasar</label><input id="pass" type="number" step="0.01" min="0" max="5" inputmode="decimal"></div>
         <div class="field"><label for="max">Nota máxima posible</label><input id="max" type="number" step="0.01" min="0.01" inputmode="decimal"></div>
         <div class="setup-hint">Puedes cambiar la escala. Ejemplo habitual: de 0 a 5, con nota mínima de 3,0 para aprobar.</div>
       </section>
+      <div class="section-caption">Tus materias</div>
       <div class="toolbar">
         <h2>Mis materias <span id="courseCount" class="tiny"></span></h2>
         <div class="toolbar-actions">
@@ -107,7 +143,7 @@
   </div>
   <script>
     'use strict';
-    const STORAGE_KEY = 'notaclara-v1';
+    const STORAGE_KEY = 'notaclara-v1'; // Misma clave: conserva las materias ya registradas en Netlify.
     const $ = s => document.querySelector(s);
     const demo = {version:1,pass:3,max:5,courses:[{id:'curso-ejemplo',name:'Materia de ejemplo',items:[{id:'e1',name:'Primer corte',weight:30,grade:4.2},{id:'e2',name:'Segundo corte',weight:30,grade:3.8},{id:'e3',name:'Examen final',weight:40,grade:null}]}]};
     const uid = () => (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : 'id-'+Date.now()+'-'+Math.random().toString(36).slice(2);
@@ -161,6 +197,7 @@
       </article>`;
     }
     function render(){
+      renderOverview();
       $('#pass').value=state.pass;$('#max').value=state.max;
       $('#courseCount').textContent='('+state.courses.length+')';
       $('#courses').innerHTML=state.courses.length?state.courses.map(card).join(''):'<div class="empty"><strong>Aquí aparecerán tus materias</strong>Agrega la primera materia para empezar a calcular tus notas.</div>';
@@ -221,6 +258,15 @@
       }catch(err){alert('No se pudo importar este archivo. Usa una copia creada desde Nota Clara.');}
       e.target.value='';
     });
+
+    // Resumen visual derivado de las notas existentes; no modifica ningún dato.
+    function renderOverview(){
+      const valid=state.courses.map(c=>calc(c)).filter(c=>c.current!==null && !c.invalid);
+      const average=valid.length ? valid.reduce((total,c)=>total+c.current,0)/valid.length : null;
+      $('#overviewValue').innerHTML=(average===null?'—':f(average))+' <small>/ '+f(state.max)+'</small>';
+      $('#overviewCount').textContent=valid.length;
+    }
+
     render();
   </script>
 </body>
