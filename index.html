@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#10182d">
+  <meta name="description" content="Calcula tu promedio ponderado y cuánto necesitas para aprobar cada materia. Sin anuncios.">
+  <title>Nota Clara · Calculadora de notas</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0b1121;--panel:#131c31;--panel2:#19243a;--text:#f5f7fc;--sub:#a9b5c9;--border:#2c3a53;--primary:#84e3bd;--blue:#92b8ff;--amber:#ffcf80;--red:#ff9d9d;--radius:20px}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(ellipse at 85% -10%,#18345d 0,transparent 43%),radial-gradient(ellipse at 3% 5%,#123f3f 0,transparent 34%),var(--bg);color:var(--text);line-height:1.45}
+    button,input{font:inherit}
+    button{cursor:pointer}
+    button:focus-visible,input:focus-visible{outline:2px solid var(--primary);outline-offset:3px}
+    .shell{max-width:1140px;margin:auto;padding:30px 20px 80px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:32px}
+    .brand{display:flex;align-items:center;gap:11px;font-size:1.22rem;font-weight:780;letter-spacing:-.035em}
+    .brand-icon{height:38px;width:38px;border-radius:12px;display:grid;place-items:center;background:var(--primary);color:#09241c;font-weight:900;font-size:1.5rem}
+    .pill{border:1px solid #41645f;background:#132d2e;color:var(--primary);border-radius:999px;padding:7px 12px;font-size:.78rem;font-weight:650}
+    h1{font-size:clamp(2rem,4.5vw,3.75rem);line-height:1.06;letter-spacing:-.055em;margin:0 0 16px;max-width:760px}
+    h1 span{color:var(--primary)}
+    .lead{color:var(--sub);margin:0 0 30px;max-width:700px;font-size:1.02rem}
+    .setup{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;border:1px solid var(--border);border-radius:var(--radius);background:#141d30c9;padding:18px;margin-bottom:26px}
+    .field{display:flex;flex-direction:column;gap:7px}
+    .field label{font-size:.82rem;color:#c4ccdc;font-weight:650}
+    .field input,.add-row input,.course-name,.eval-row input{color:var(--text);border:1px solid var(--border);border-radius:11px;background:#0c1526;padding:12px 13px;min-width:0;width:100%}
+    .field input{width:145px}
+    input::placeholder{color:#7d8aa0}
+    .setup-hint{color:var(--sub);font-size:.79rem;flex:1 1 240px;padding-bottom:4px}
+    .toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+    h2{font-size:1.18rem;letter-spacing:-.02em;margin:0}
+    .toolbar-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{border:1px solid var(--border);border-radius:11px;padding:10px 14px;background:#1b2942;color:var(--text);font-size:.87rem;font-weight:650;transition:background .12s,transform .12s}
+    .btn:hover{background:#283b5b}
+    .btn:active{transform:scale(.98)}
+    .btn-primary{background:var(--primary);color:#09251b;border-color:var(--primary)}
+    .btn-primary:hover{background:#a0ebce}
+    .btn-small{padding:8px 11px;font-size:.8rem}
+    .btn-danger{color:var(--red);background:transparent}
+    .add-row{display:flex;gap:9px;margin-bottom:18px}
+    .add-row input{flex:1}
+    .courses{display:grid;gap:20px}
+    .card{background:linear-gradient(155deg,#172139 0%,#111a2e 78%);border:1px solid var(--border);border-radius:22px;overflow:hidden;box-shadow:0 12px 32px #0208172b}
+    .card-head{padding:22px 22px 12px;display:flex;gap:14px;justify-content:space-between;align-items:center}
+    .course-name{font-size:1.2rem;font-weight:750;letter-spacing:-.025em;background:transparent;border:1px solid transparent;padding:6px 8px;margin-left:-8px;max-width:600px}
+    .course-name:hover,.course-name:focus{background:#0c1526;border-color:var(--border)}
+    .stats{padding:10px 22px 18px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .stat{border:1px solid #30405a;background:#16233a;padding:14px;border-radius:14px;min-width:0}
+    .stat-label{font-size:.75rem;color:#aebbd0;font-weight:650;margin-bottom:8px}
+    .stat-value{font-size:clamp(1.2rem,2.3vw,1.8rem);font-weight:780;letter-spacing:-.03em;line-height:1.2;overflow-wrap:anywhere}
+    .stat-sub{color:#93a2b9;font-size:.72rem;margin-top:6px;min-height:1.2em}
+    .mint{color:var(--primary)}.amber{color:var(--amber)}.bad{color:var(--red)}.blue{color:var(--blue)}
+    .progress-area{padding:0 22px 18px}
+    .progress-label{display:flex;justify-content:space-between;gap:12px;font-size:.78rem;color:#abb8c8;margin-bottom:8px}
+    .track{height:9px;border-radius:99px;background:#303c53;overflow:hidden}
+    .fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#47bda3,#97ecc5);transition:width .2s}
+    .notice{font-size:.82rem;color:#c6d1e0;margin:12px 0 0}
+    .notice.warn{color:var(--amber)}.notice.danger{color:var(--red)}
+    .eval-wrap{border-top:1px solid var(--border);padding:16px 22px 20px;background:#10192c82}
+    .eval-head,.eval-row{display:grid;grid-template-columns:minmax(120px,2fr) minmax(90px,.75fr) minmax(95px,.75fr) 37px;gap:10px;align-items:center}
+    .eval-head{font-size:.75rem;color:#93a4bd;padding:0 3px 8px;font-weight:650}
+    .eval-row{margin-bottom:9px}
+    .eval-row input{padding:10px 12px;border-radius:9px}
+    .eval-row input:disabled{opacity:.65}
+    .remove{height:36px;width:36px;border:1px solid #3b3c50;background:transparent;border-radius:9px;color:#ffb5b5;font-size:1.1rem}
+    .remove:hover{background:#402c3b}
+    .eval-actions{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .tiny{font-size:.78rem;color:#96a6bf}
+    .foot{border-top:1px solid var(--border);margin-top:34px;padding-top:18px;color:#91a2b9;font-size:.83rem;display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap}
+    .empty{border:1px dashed #40516d;border-radius:20px;padding:34px 20px;text-align:center;color:var(--sub)}
+    .empty strong{display:block;color:var(--text);font-size:1.1rem;margin-bottom:8px}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(max-width:650px){.shell{padding:19px 13px 60px}.topbar{margin-bottom:27px}.pill{font-size:.7rem}.setup{padding:14px}.field{flex:1 1 115px}.field input{width:100%}.card-head{padding:17px 15px 10px}.stats{padding:8px 15px 16px;grid-template-columns:1fr 1fr}.stat:last-child{grid-column:1/-1}.stat{padding:12px}.stat-value{font-size:1.5rem}.progress-area{padding:0 15px 18px}.eval-wrap{padding:14px 12px 17px}.eval-head,.eval-row{grid-template-columns:minmax(0,1.5fr) minmax(0,.8fr) minmax(0,.8fr) 31px;gap:5px}.eval-row input{padding:10px 7px;font-size:.85rem}.remove{width:31px;height:35px}.eval-head{font-size:.68rem}.add-row{flex-wrap:wrap}.add-row input{flex-basis:100%}.add-row .btn{width:100%}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-icon" aria-hidden="true">✓</span> Nota Clara</div>
+      <span class="pill">100% sin anuncios</span>
+    </header>
+    <main>
+      <h1>Tus notas claras.<br><span>Sin hacer cuentas.</span></h1>
+      <p class="lead">Calcula tu promedio ponderado, descubre cuánto necesitas para pasar y organiza todas tus materias en un solo lugar.</p>
+      <section class="setup" aria-label="Configuración de notas">
+        <div class="field"><label for="pass">Nota mínima para pasar</label><input id="pass" type="number" step="0.01" min="0" max="5" inputmode="decimal"></div>
+        <div class="field"><label for="max">Nota máxima posible</label><input id="max" type="number" step="0.01" min="0.01" inputmode="decimal"></div>
+        <div class="setup-hint">Puedes cambiar la escala. Ejemplo habitual: de 0 a 5, con nota mínima de 3,0 para aprobar.</div>
+      </section>
+      <div class="toolbar">
+        <h2>Mis materias <span id="courseCount" class="tiny"></span></h2>
+        <div class="toolbar-actions">
+          <button type="button" class="btn btn-small" id="export">↓ Guardar copia</button>
+          <button type="button" class="btn btn-small" id="importBtn">↑ Cargar copia</button>
+          <input type="file" id="importFile" accept="application/json,.json" class="sr-only">
+        </div>
+      </div>
+      <form id="addCourse" class="add-row">
+        <label class="sr-only" for="newCourse">Nombre de la materia</label>
+        <input id="newCourse" placeholder="Ejemplo: Sistemas Operativos" maxlength="90" required>
+        <button type="submit" class="btn btn-primary">+ Agregar materia</button>
+      </form>
+      <div id="courses" class="courses" aria-live="polite"></div>
+      <footer class="foot"><span>🔒 Tus datos se guardan en este navegador, no en un servidor.</span><span>Para llevarlos a otro dispositivo, usa Guardar copia y Cargar copia.</span></footer>
+    </main>
+  </div>
+  <script>
+    'use strict';
+    const STORAGE_KEY = 'notaclara-v1';
+    const $ = s => document.querySelector(s);
+    const demo = {version:1,pass:3,max:5,courses:[{id:'curso-ejemplo',name:'Materia de ejemplo',items:[{id:'e1',name:'Primer corte',weight:30,grade:4.2},{id:'e2',name:'Segundo corte',weight:30,grade:3.8},{id:'e3',name:'Examen final',weight:40,grade:null}]}]};
+    const uid = () => (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : 'id-'+Date.now()+'-'+Math.random().toString(36).slice(2);
+    const num = v => { if(v===null||v===undefined||v==='')return null; const n=Number(String(v).replace(',','.'));return Number.isFinite(n)?n:null; };
+    const clamp = (v,min,max)=>Math.min(max,Math.max(min,v));
+    const esc = s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const f = n => Number(n).toLocaleString('es-CO',{minimumFractionDigits:2,maximumFractionDigits:2});
+    const fileName = 'mis-notas-'+new Date().toISOString().slice(0,10)+'.json';
+    const finiteIn = (n,min,max) => typeof n==='number' && Number.isFinite(n) && n>=min && n<=max;
+    function validImport(data){
+      if(!data||!Array.isArray(data.courses)||!finiteIn(data.max,.01,100)||!finiteIn(data.pass,0,data.max)||data.courses.length>200)return false;
+      return data.courses.every(c=>typeof c.name==='string'&&c.name.length<=90&&Array.isArray(c.items)&&c.items.length<=100&&c.items.every(i=>typeof i.name==='string'&&i.name.length<=90&&finiteIn(i.weight,0,100)&&(i.grade===null||finiteIn(i.grade,0,data.max))));
+    }
+    function load(){try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const data=JSON.parse(raw);if(validImport(data))return data;}}catch(e){console.warn('No fue posible leer datos guardados',e);}return JSON.parse(JSON.stringify(demo));}
+    let state=load();
+    function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){console.warn('No fue posible guardar en el navegador',e);}}
+    function calc(course){
+      const assigned=course.items.reduce((s,i)=>s+i.weight,0);
+      const graded=course.items.filter(i=>i.grade!==null);
+      const completed=graded.reduce((s,i)=>s+i.weight,0);
+      const points=graded.reduce((s,i)=>s+i.grade*i.weight/100,0);
+      const pending=Math.max(0,100-completed);
+      const needed=pending>1e-9?(state.pass-points)*100/pending:null;
+      const current=completed>0?points*100/completed:null;
+      return {assigned,completed,points,pending,needed,current,invalid:assigned>100+1e-7};
+    }
+    function gradeAdvice(c){
+      if(c.invalid)return {value:'Revisar',detail:'Los porcentajes superan el 100 %.',cls:'bad',notice:'La suma de evaluaciones supera el 100 %. Ajusta los porcentajes antes de calcular.',noticeClass:'danger'};
+      if(c.completed===0)return {value:'—',detail:'Ingresa tu primera nota.',cls:'blue',notice:'Completa las notas que ya conoces. Puedes dejar en blanco las evaluaciones pendientes.',noticeClass:''};
+      if(c.pending<=1e-9)return c.points+1e-8>=state.pass?{value:'¡Aprobada!',detail:'Ya tienes el 100 % evaluado.',cls:'mint',notice:'¡Cumpliste tu meta de aprobación!',noticeClass:''}:{value:'No aprobada',detail:'Ya tienes el 100 % evaluado.',cls:'bad',notice:'Con las calificaciones ingresadas no alcanzaste la meta.',noticeClass:'danger'};
+      if(c.needed<=0)return {value:'¡Ya pasaste!',detail:'Incluso si obtienes 0 en lo pendiente.',cls:'mint',notice:'Con tus notas actuales ya alcanzaste la meta. Sigue sumando puntos.',noticeClass:''};
+      if(c.needed>state.max+1e-8)return {value:'No alcanza',detail:'Necesitarías '+f(c.needed)+' de '+f(state.max)+'.',cls:'bad',notice:'Con el porcentaje restante no es matemáticamente posible alcanzar la meta indicada.',noticeClass:'danger'};
+      const safe=Math.ceil((c.needed-1e-9)*100)/100;
+      return {value:f(safe),detail:'Promedio mínimo en lo pendiente.',cls:'mint',notice:c.assigned<100-1e-7?'Aún faltan '+f(100-c.assigned)+' % por asignar a evaluaciones. El cálculo incluye ese porcentaje como pendiente.':'La cifra indica el promedio que debes obtener en todo el porcentaje restante.',noticeClass:c.assigned<100-1e-7?'warn':''};
+    }
+    function card(course){
+      const c=calc(course),a=gradeAdvice(c);
+      const percent=clamp(c.completed,0,100);
+      return `<article class="card" data-id="${esc(course.id)}">
+        <div class="card-head"><label class="sr-only" for="name-${esc(course.id)}">Nombre de la materia</label><input class="course-name" id="name-${esc(course.id)}" data-course-name value="${esc(course.name)}" maxlength="90" aria-label="Nombre de la materia"><button type="button" class="btn btn-small btn-danger" data-action="delete-course" aria-label="Eliminar ${esc(course.name)}">Eliminar</button></div>
+        <div class="stats">
+          <div class="stat"><div class="stat-label">Acumulado final</div><div class="stat-value blue">${f(c.points)} <span class="tiny">/ ${f(state.max)}</span></div><div class="stat-sub">Puntos ya asegurados</div></div>
+          <div class="stat"><div class="stat-label">Promedio de lo evaluado</div><div class="stat-value">${c.current===null?'—':f(c.current)}</div><div class="stat-sub">Solo notas conocidas</div></div>
+          <div class="stat"><div class="stat-label">¿Cuánto necesitas?</div><div class="stat-value ${a.cls}">${esc(a.value)}</div><div class="stat-sub">${esc(a.detail)}</div></div>
+        </div>
+        <div class="progress-area"><div class="progress-label"><span>${f(c.completed)} % calificado</span><span>${f(c.pending)} % por calificar</span></div><div class="track"><div class="fill" style="width:${percent}%"></div></div><p class="notice ${a.noticeClass}">${esc(a.notice)}</p></div>
+        <div class="eval-wrap"><div class="eval-head"><span>Evaluación</span><span>Peso (%)</span><span>Nota</span><span></span></div>
+          ${course.items.map(i=>`<div class="eval-row" data-item="${esc(i.id)}"><input data-item-name maxlength="90" placeholder="Nombre" value="${esc(i.name)}" aria-label="Nombre de evaluación"><input data-weight type="number" inputmode="decimal" min="0" max="100" step="0.01" value="${i.weight}" aria-label="Porcentaje de ${esc(i.name)}"><input data-grade type="number" inputmode="decimal" min="0" max="${state.max}" step="0.01" placeholder="Pendiente" value="${i.grade===null?'':i.grade}" aria-label="Nota de ${esc(i.name)}"><button type="button" class="remove" data-action="delete-item" aria-label="Eliminar evaluación ${esc(i.name)}">×</button></div>`).join('')}
+          <div class="eval-actions"><button type="button" class="btn btn-small" data-action="add-item">+ Agregar evaluación</button><span class="tiny">Porcentaje asignado: ${f(c.assigned)} % de 100 %</span></div>
+        </div>
+      </article>`;
+    }
+    function render(){
+      $('#pass').value=state.pass;$('#max').value=state.max;
+      $('#courseCount').textContent='('+state.courses.length+')';
+      $('#courses').innerHTML=state.courses.length?state.courses.map(card).join(''):'<div class="empty"><strong>Aquí aparecerán tus materias</strong>Agrega la primera materia para empezar a calcular tus notas.</div>';
+    }
+    $('#addCourse').addEventListener('submit',e=>{
+      e.preventDefault();const input=$('#newCourse'),name=input.value.trim();if(!name)return;
+      state.courses.push({id:uid(),name,items:[]});input.value='';save();render();
+      document.querySelector('.card:last-child')?.scrollIntoView({behavior:'smooth',block:'nearest'});
+    });
+    $('#courses').addEventListener('click',e=>{
+      const b=e.target.closest('[data-action]');if(!b)return;
+      const el=b.closest('[data-id]'),course=state.courses.find(c=>c.id===el?.dataset.id);if(!course)return;
+      const action=b.dataset.action;
+      if(action==='delete-course'){
+        if(!confirm('¿Eliminar la materia "'+course.name+'" y todas sus notas?'))return;
+        state.courses=state.courses.filter(c=>c.id!==course.id);
+      }
+      if(action==='add-item'){
+        const total=course.items.reduce((s,i)=>s+i.weight,0);
+        course.items.push({id:uid(),name:'Nueva evaluación',weight:Math.max(0,Math.round((100-total)*100)/100),grade:null});
+      }
+      if(action==='delete-item')course.items=course.items.filter(i=>i.id!==b.closest('[data-item]')?.dataset.item);
+      save();render();
+    });
+    $('#courses').addEventListener('change',e=>{
+      const t=e.target,el=t.closest('[data-id]'),course=state.courses.find(c=>c.id===el?.dataset.id);if(!course)return;
+      if(t.matches('[data-course-name]')){course.name=t.value.trim()||'Materia sin nombre';}
+      else{
+        const item=course.items.find(i=>i.id===t.closest('[data-item]')?.dataset.item);if(!item)return;
+        if(t.matches('[data-item-name]'))item.name=t.value.trim()||'Evaluación';
+        if(t.matches('[data-weight]')){const n=num(t.value);if(n===null||n<0||n>100){alert('El peso debe estar entre 0 y 100 %.');render();return;}item.weight=n;}
+        if(t.matches('[data-grade]')){const n=num(t.value);if(n!==null&&(n<0||n>state.max)){alert('La nota debe estar entre 0 y '+state.max+'. Deja el campo en blanco si todavía no tienes nota.');render();return;}item.grade=n;}
+      }
+      save();render();
+    });
+    function changeSettings(){
+      const pass=num($('#pass').value),max=num($('#max').value);
+      if(max===null||max<=0||max>100||pass===null||pass<0||pass>max){alert('Usa una nota máxima mayor que 0 y una meta entre 0 y la nota máxima.');render();return;}
+      if(state.courses.some(c=>c.items.some(i=>i.grade!==null&&i.grade>max))){alert('Hay notas existentes que superan esa nota máxima. Modifícalas antes de cambiar la escala.');render();return;}
+      state.pass=pass;state.max=max;save();render();
+    }
+    $('#pass').addEventListener('change',changeSettings);$('#max').addEventListener('change',changeSettings);
+    $('#export').addEventListener('click',()=>{
+      const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+      const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=fileName;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+    });
+    $('#importBtn').addEventListener('click',()=>$('#importFile').click());
+    $('#importFile').addEventListener('change',async e=>{
+      const file=e.target.files?.[0];if(!file)return;
+      if(file.size>2e6){alert('El archivo es demasiado grande.');e.target.value='';return;}
+      try{
+        const data=JSON.parse(await file.text());
+        if(!validImport(data))throw new Error('Formato o datos incorrectos');
+        if(confirm('¿Reemplazar las materias actuales con las del archivo de copia?')){
+          state={version:1,pass:data.pass,max:data.max,courses:data.courses.map(c=>({id:uid(),name:c.name,items:c.items.map(i=>({id:uid(),name:i.name,weight:i.weight,grade:i.grade}))}))};
+          save();render();
+        }
+      }catch(err){alert('No se pudo importar este archivo. Usa una copia creada desde Nota Clara.');}
+      e.target.value='';
+    });
+    render();
+  </script>
+</body>
+</html>
